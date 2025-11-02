@@ -1,6 +1,6 @@
 import axios from "axios";
 import { FormEvent, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from "../modules/router/SimpleRouter";
 import { useAuth } from "../modules/auth/AuthProvider";
 import "./LoginPage.css";
 

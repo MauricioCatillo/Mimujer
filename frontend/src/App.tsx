@@ -1,4 +1,4 @@
-import { Navigate, Route, Routes } from "react-router-dom";
+import { useEffect, useMemo } from "react";
 import AppLayout from "./components/layout/AppLayout";
 import DashboardPage from "./pages/DashboardPage";
 import CalendarPage from "./pages/CalendarPage";
@@ -8,61 +8,58 @@ import RemindersPage from "./pages/RemindersPage";
 import LoginPage from "./pages/LoginPage";
 import { useAuth } from "./modules/auth/AuthProvider";
 import LoadingScreen from "./components/status/LoadingScreen";
+import { useNavigate, useRouter } from "./modules/router/SimpleRouter";
 
-const RequireAuth = ({ children }: { children: JSX.Element }) => {
+const App = () => {
   const { token, loading } = useAuth();
+  const { path } = useRouter();
+  const navigate = useNavigate();
+
+  const privateRoutes = useMemo<Record<string, JSX.Element>>(
+    () => ({
+      "/": <DashboardPage />,
+      "/calendario": <CalendarPage />,
+      "/album": <PhotoAlbumPage />,
+      "/proyectos": <ProjectsGalleryPage />,
+      "/recordatorios": <RemindersPage />,
+    }),
+    [],
+  );
+
+  useEffect(() => {
+    if (loading) {
+      return;
+    }
+
+    if (!token && path !== "/login") {
+      navigate("/login", { replace: true });
+      return;
+    }
+
+    if (token && path === "/login") {
+      navigate("/", { replace: true });
+      return;
+    }
+
+    if (token && !privateRoutes[path]) {
+      navigate("/", { replace: true });
+    }
+  }, [loading, navigate, path, privateRoutes, token]);
 
   if (loading) {
-    return <LoadingScreen message="Preparando tus recuerdos" />;
+    return <LoadingScreen message="Cargando momentos especiales" />;
   }
 
   if (!token) {
-    return <Navigate to="/login" replace />;
+    if (path !== "/login") {
+      return <LoadingScreen message="Redirigiéndote al portal de amor" />;
+    }
+    return <LoginPage />;
   }
 
-  return children;
+  const content = privateRoutes[path] ?? <DashboardPage />;
+
+  return <AppLayout>{content}</AppLayout>;
 };
-
-const RedirectIfAuthenticated = ({ children }: { children: JSX.Element }) => {
-  const { token, loading } = useAuth();
-
-  if (loading) {
-    return <LoadingScreen message="Abriendo el portal" />;
-  }
-
-  if (token) {
-    return <Navigate to="/" replace />;
-  }
-
-  return children;
-};
-
-const App = () => (
-  <Routes>
-    <Route
-      path="/login"
-      element={
-        <RedirectIfAuthenticated>
-          <LoginPage />
-        </RedirectIfAuthenticated>
-      }
-    />
-    <Route
-      path="/"
-      element={
-        <RequireAuth>
-          <AppLayout />
-        </RequireAuth>
-      }
-    >
-      <Route index element={<DashboardPage />} />
-      <Route path="calendario" element={<CalendarPage />} />
-      <Route path="album" element={<PhotoAlbumPage />} />
-      <Route path="proyectos" element={<ProjectsGalleryPage />} />
-      <Route path="recordatorios" element={<RemindersPage />} />
-    </Route>
-    <Route path="*" element={<Navigate to="/" replace />} />
-  </Routes>
-);
 
 export default App;
