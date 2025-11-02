@@ -1,0 +1,7 @@
+node_modules
+backend/dist
+backend/coverage
+frontend/dist
+frontend/node_modules
+.vscode
+.DS_Store
