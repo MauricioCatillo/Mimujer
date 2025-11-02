@@ -13,8 +13,8 @@ const normalizeBaseUrl = (input: string | undefined | null) => {
   if (/^https?:/i.test(trimmed)) {
     const url = new URL(trimmed);
     const sanitizedPath = url.pathname.replace(/\/+$/, "");
-    if (!/\/api(\/$)?$/i.test(sanitizedPath)) {
-      url.pathname = `${sanitizedPath === "" ? "/" : sanitizedPath}/api`;
+    if (sanitizedPath === "") {
+      url.pathname = "/api";
     } else {
       url.pathname = sanitizedPath;
     }
@@ -28,10 +28,6 @@ const normalizeBaseUrl = (input: string | undefined | null) => {
 
   if (!relative.startsWith("/")) {
     relative = `/${relative}`;
-  }
-
-  if (!/\/api(\/$)?$/i.test(relative)) {
-    relative = `${relative}/api`;
   }
 
   return relative.replace(/\/+$/, "");
