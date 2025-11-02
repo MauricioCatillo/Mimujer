@@ -1,0 +1,26 @@
+{
+  "name": "mimujer-frontend",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "start": "vite",
+    "build": "tsc && vite build",
+    "test": "vitest"
+  },
+  "dependencies": {
+    "@tanstack/react-query": "^5.36.0",
+    "axios": "^1.6.8",
+    "date-fns": "^3.6.0",
+    "react": "^18.3.1",
+    "react-big-calendar": "^1.11.3",
+    "react-dom": "^18.3.1"
+  },
+  "devDependencies": {
+    "@types/react": "^18.2.64",
+    "@types/react-dom": "^18.2.21",
+    "@types/react-big-calendar": "^1.10.7",
+    "typescript": "^5.4.5",
+    "vite": "^5.2.0",
+    "vitest": "^1.5.2"
+  }
+}
