@@ -19,13 +19,18 @@ export class UserService {
 
   static ensureSeedUser(email: string, password: string): void {
     const existing = this.findByEmail(email);
+    const db = getDatabase();
+    const hash = bcrypt.hashSync(password, 10);
+
     if (existing) {
+      const passwordMatches = bcrypt.compareSync(password, existing.password_hash);
+      if (!passwordMatches) {
+        db.prepare(`UPDATE users SET password_hash = ? WHERE id = ?`).run(hash, existing.id);
+      }
       return;
     }
 
-    const db = getDatabase();
     const now = new Date().toISOString();
-    const hash = bcrypt.hashSync(password, 10);
     db.prepare(
       `INSERT INTO users (id, email, password_hash, created_at) VALUES (?, ?, ?, ?)`,
     ).run(randomUUID(), email, hash, now);
