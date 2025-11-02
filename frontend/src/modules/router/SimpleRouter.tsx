@@ -27,13 +27,22 @@ const normalizePath = (to: string) => {
   return to.startsWith("/") ? to : `/${to}`;
 };
 
+const getHashPath = () => {
+  if (typeof window === "undefined") {
+    return "/";
+  }
+
+  const { hash } = window.location;
+
+  if (!hash) {
+    return "/";
+  }
+
+  return normalizePath(hash.slice(1));
+};
+
 export const BrowserRouter = ({ children }: { children: ReactNode }) => {
-  const [path, setPath] = useState<string>(() => {
-    if (typeof window === "undefined") {
-      return "/";
-    }
-    return window.location.pathname || "/";
-  });
+  const [path, setPath] = useState<string>(() => getHashPath());
 
   const navigate = useCallback((to: string, options?: NavigateOptions) => {
     const target = normalizePath(to);
@@ -43,10 +52,13 @@ export const BrowserRouter = ({ children }: { children: ReactNode }) => {
       return;
     }
 
+    const url = new URL(window.location.href);
+    url.hash = target;
+
     if (options?.replace) {
-      window.history.replaceState(null, "", target);
+      window.history.replaceState(null, "", url);
     } else {
-      window.history.pushState(null, "", target);
+      window.location.hash = target;
     }
     setPath(target);
   }, []);
@@ -56,13 +68,17 @@ export const BrowserRouter = ({ children }: { children: ReactNode }) => {
       return () => {};
     }
 
+    if (!window.location.hash) {
+      window.location.hash = path;
+    }
+
     const handler = () => {
-      setPath(window.location.pathname || "/");
+      setPath(getHashPath());
     };
 
-    window.addEventListener("popstate", handler);
-    return () => window.removeEventListener("popstate", handler);
-  }, []);
+    window.addEventListener("hashchange", handler);
+    return () => window.removeEventListener("hashchange", handler);
+  }, [path]);
 
   const value = useMemo(() => ({ path, navigate }), [path, navigate]);
 
@@ -115,7 +131,12 @@ export const NavLink = ({ to, children, end = false, className }: NavLinkProps) 
   };
 
   return (
-    <a href={target} className={computedClassName} onClick={handleClick} aria-current={isActive ? "page" : undefined}>
+    <a
+      href={`#${target}`}
+      className={computedClassName}
+      onClick={handleClick}
+      aria-current={isActive ? "page" : undefined}
+    >
       {children}
     </a>
   );
