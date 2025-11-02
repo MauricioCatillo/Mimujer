@@ -1,0 +1,60 @@
+.reminders header {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  margin-bottom: 1rem;
+}
+
+.reminders-table-wrapper {
+  overflow-x: auto;
+}
+
+.reminders-table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 520px;
+}
+
+.reminders-table th,
+.reminders-table td {
+  padding: 0.75rem 1rem;
+  text-align: left;
+  border-bottom: 1px solid rgba(214, 51, 108, 0.15);
+  color: #5f021f;
+}
+
+.reminders-table th {
+  font-size: 0.95rem;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  color: #a11d51;
+}
+
+.reminders-pill {
+  display: inline-block;
+  padding: 0.3rem 0.75rem;
+  border-radius: 999px;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.reminders-pill--sent {
+  background: rgba(121, 217, 182, 0.35);
+  color: #226c4f;
+}
+
+.reminders-pill--skipped {
+  background: rgba(255, 236, 179, 0.5);
+  color: #795500;
+}
+
+.reminders-pill--failed {
+  background: rgba(214, 51, 108, 0.2);
+  color: #d6336c;
+}
+
+.reminders-empty {
+  text-align: center;
+  padding: 2rem 1rem;
+  color: #7b2b57;
+}
