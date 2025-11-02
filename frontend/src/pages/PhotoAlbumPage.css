@@ -114,3 +114,23 @@
   text-align: center;
   color: #7b2b57;
 }
+
+@media (max-width: 768px) {
+  .album-wrapper {
+    grid-template-columns: 1fr;
+  }
+
+  .album-grid {
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  }
+}
+
+@media (max-width: 520px) {
+  .album-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .album-photo img {
+    height: 200px;
+  }
+}
