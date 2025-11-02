@@ -4,7 +4,12 @@ const configuredBaseUrl = import.meta.env.VITE_API_URL
   ? import.meta.env.VITE_API_URL.trim().replace(/\/+$/, "")
   : undefined;
 
-const baseURL = configuredBaseUrl && configuredBaseUrl.length > 0 ? configuredBaseUrl : "/api";
+const baseURL =
+  configuredBaseUrl && configuredBaseUrl.length > 0
+    ? configuredBaseUrl
+    : import.meta.env.DEV
+      ? "http://localhost:4000/api"
+      : "/api";
 
 const assetBase = (() => {
   if (!baseURL.startsWith("http")) {
