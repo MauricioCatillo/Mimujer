@@ -1,0 +1,67 @@
+:root {
+  color-scheme: light;
+  font-family: "Quicksand", "Segoe UI", system-ui, sans-serif;
+  background: radial-gradient(circle at top left, #ffe0f0, #fff8f0 60%);
+  color: #4a0826;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background: transparent;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+img {
+  max-width: 100%;
+  display: block;
+}
+
+button {
+  font-family: inherit;
+}
+
+.romantic-button {
+  background: linear-gradient(135deg, #f06595, #faa2c1);
+  border: none;
+  color: #fff;
+  padding: 0.75rem 1.5rem;
+  border-radius: 999px;
+  cursor: pointer;
+  box-shadow: 0 10px 20px rgba(240, 101, 149, 0.3);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.romantic-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 24px rgba(240, 101, 149, 0.35);
+}
+
+.romantic-card {
+  background: rgba(255, 255, 255, 0.85);
+  border-radius: 18px;
+  padding: 1.5rem;
+  box-shadow: 0 20px 50px rgba(212, 55, 106, 0.1);
+  backdrop-filter: blur(10px);
+}
+
+.romantic-section-title {
+  font-family: "Playfair Display", serif;
+  font-size: 2rem;
+  margin-bottom: 1rem;
+  color: #b51763;
+}
+
+@media (max-width: 768px) {
+  .romantic-section-title {
+    font-size: 1.6rem;
+  }
+}

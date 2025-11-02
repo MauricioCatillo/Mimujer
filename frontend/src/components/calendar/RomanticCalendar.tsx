@@ -1,4 +1,4 @@
-import { type CSSProperties, type FormEvent, useMemo, useState } from "react";
+import { type FormEvent, useMemo, useState } from "react";
 import {
   Calendar,
   dateFnsLocalizer,
@@ -10,6 +10,8 @@ import esLocale from "date-fns/locale/es";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
 import "react-big-calendar/lib/css/react-big-calendar.css";
+import api from "../../services/api";
+import "./RomanticCalendar.css";
 
 type ReminderMethod = "email" | "push";
 
@@ -50,14 +52,6 @@ const localizer = dateFnsLocalizer({
   locales,
 });
 
-const romanticPalette = {
-  background: "linear-gradient(135deg, rgba(255,204,213,0.85), rgba(255,236,179,0.9))",
-  primary: "#d6336c",
-  secondary: "#f783ac",
-  accent: "#ffb3c1",
-  text: "#5f021f",
-};
-
 const tags = ["Cita", "Aniversario", "Sorpresa", "Tiempo de calidad", "Otro"];
 
 const defaultForm: RomanticEventForm = {
@@ -71,10 +65,6 @@ const defaultForm: RomanticEventForm = {
   reminderMinutesBefore: 60,
 };
 
-const api = axios.create({
-  baseURL: "/api",
-});
-
 const toCalendarEvent = (event: RomanticEvent): RBCEvent => ({
   title: `${event.title}${event.tag ? ` · ${event.tag}` : ""}`,
   start: new Date(event.start),
@@ -84,14 +74,7 @@ const toCalendarEvent = (event: RomanticEvent): RBCEvent => ({
 });
 
 const romanticEventStyleGetter = () => ({
-  style: {
-    background: romanticPalette.accent,
-    color: romanticPalette.text,
-    borderRadius: "12px",
-    border: `2px solid ${romanticPalette.primary}`,
-    boxShadow: "0 4px 12px rgba(214, 51, 108, 0.25)",
-    padding: "4px 8px",
-  },
+  className: "calendar-event",
 });
 
 const RomanticCalendar = () => {
@@ -206,32 +189,15 @@ const RomanticCalendar = () => {
   };
 
   return (
-    <div
-      style={{
-        display: "grid",
-        gridTemplateColumns: "2fr 1fr",
-        gap: "24px",
-        padding: "24px",
-        background: romanticPalette.background,
-        minHeight: "100vh",
-        fontFamily: "'Quicksand', 'Poppins', sans-serif",
-        color: romanticPalette.text,
-      }}
-    >
-      <section style={{
-        background: "rgba(255, 255, 255, 0.7)",
-        borderRadius: "24px",
-        boxShadow: "0 12px 30px rgba(214, 51, 108, 0.15)",
-        padding: "16px",
-        border: `1px solid ${romanticPalette.accent}`,
-      }}>
-        <header style={{ display: "flex", alignItems: "center", gap: "12px", marginBottom: "16px" }}>
-          <span role="img" aria-label="corazón" style={{ fontSize: "2rem" }}>
+    <div className="calendar-screen">
+      <section className="calendar-board romantic-card">
+        <header className="calendar-header">
+          <span role="img" aria-label="corazón">
             💞
           </span>
           <div>
-            <h1 style={{ margin: 0 }}>Calendario Romántico</h1>
-            <p style={{ margin: 0 }}>Organiza citas, aniversarios y momentos memorables.</p>
+            <h1>Calendario Romántico</h1>
+            <p>Organiza citas, aniversarios y momentos memorables.</p>
           </div>
         </header>
         <Calendar
@@ -241,7 +207,7 @@ const RomanticCalendar = () => {
           events={calendarEvents}
           startAccessor="start"
           endAccessor="end"
-          style={{ height: "70vh" }}
+          className="calendar-widget"
           onSelectEvent={handleSelectEvent}
           onSelectSlot={handleSelectSlot}
           eventPropGetter={romanticEventStyleGetter}
@@ -256,28 +222,24 @@ const RomanticCalendar = () => {
           }}
           components={{
             toolbar: (toolbarProps) => (
-              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "8px" }}>
-                <button
-                  type="button"
-                  onClick={() => toolbarProps.onNavigate("PREV")}
-                  style={toolbarButtonStyle}
-                >
+              <div className="calendar-toolbar">
+                <button type="button" onClick={() => toolbarProps.onNavigate("PREV")} className="calendar-toolbar__button">
                   ⏮️
                 </button>
-                <div>
-                  <h2 style={{ margin: 0 }}>{toolbarProps.label}</h2>
+                <div className="calendar-toolbar__label">
+                  <h2>{toolbarProps.label}</h2>
                 </div>
-                <div style={{ display: "flex", gap: "8px" }}>
-                  <button type="button" onClick={() => toolbarProps.onView("month")} style={toolbarButtonStyle}>
+                <div className="calendar-toolbar__controls">
+                  <button type="button" onClick={() => toolbarProps.onView("month")} className="calendar-toolbar__button">
                     Mes
                   </button>
-                  <button type="button" onClick={() => toolbarProps.onView("week")} style={toolbarButtonStyle}>
+                  <button type="button" onClick={() => toolbarProps.onView("week")} className="calendar-toolbar__button">
                     Semana
                   </button>
-                  <button type="button" onClick={() => toolbarProps.onView("day")} style={toolbarButtonStyle}>
+                  <button type="button" onClick={() => toolbarProps.onView("day")} className="calendar-toolbar__button">
                     Día
                   </button>
-                  <button type="button" onClick={() => toolbarProps.onNavigate("NEXT")} style={toolbarButtonStyle}>
+                  <button type="button" onClick={() => toolbarProps.onNavigate("NEXT")} className="calendar-toolbar__button">
                     ⏭️
                   </button>
                 </div>
@@ -286,74 +248,58 @@ const RomanticCalendar = () => {
           }}
         />
       </section>
-      <section
-        style={{
-          background: "rgba(255, 255, 255, 0.9)",
-          borderRadius: "24px",
-          boxShadow: "0 10px 24px rgba(247, 131, 172, 0.25)",
-          padding: "24px",
-          border: `1px solid ${romanticPalette.secondary}`,
-          display: "flex",
-          flexDirection: "column",
-          gap: "16px",
-        }}
-      >
-        <h2 style={{ display: "flex", alignItems: "center", gap: "8px", margin: 0 }}>
+      <section className="calendar-form romantic-card">
+        <h2 className="calendar-form__title">
           <span role="img" aria-label="notas de amor">
             💌
           </span>
           {formData.id ? "Editar recuerdo" : "Nuevo recuerdo"}
         </h2>
-        <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
-          <label style={labelStyle}>
+        <form className="calendar-form__fields" onSubmit={handleSubmit}>
+          <label>
             Título del momento
             <input
               required
               type="text"
               value={formData.title}
               onChange={(event) => setFormData((current) => ({ ...current, title: event.target.value }))}
-              style={inputStyle}
               placeholder="Cena bajo las estrellas"
             />
           </label>
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px" }}>
-            <label style={labelStyle}>
+          <div className="calendar-form__grid">
+            <label>
               Inicio
               <input
                 required
                 type="datetime-local"
                 value={formData.start}
                 onChange={(event) => setFormData((current) => ({ ...current, start: event.target.value }))}
-                style={inputStyle}
               />
             </label>
-            <label style={labelStyle}>
+            <label>
               Fin
               <input
                 required
                 type="datetime-local"
                 value={formData.end}
                 onChange={(event) => setFormData((current) => ({ ...current, end: event.target.value }))}
-                style={inputStyle}
               />
             </label>
           </div>
-          <label style={labelStyle}>
+          <label>
             Notas cariñosas
             <textarea
               required
               value={formData.notes}
               onChange={(event) => setFormData((current) => ({ ...current, notes: event.target.value }))}
-              style={{ ...inputStyle, minHeight: "100px", resize: "vertical" }}
               placeholder="No olvidar flores y playlist favorita"
             />
           </label>
-          <label style={labelStyle}>
+          <label>
             Etiqueta especial
             <select
               value={formData.tag}
               onChange={(event) => setFormData((current) => ({ ...current, tag: event.target.value }))}
-              style={inputStyle}
             >
               {tags.map((tag) => (
                 <option key={tag} value={tag}>
@@ -362,18 +308,9 @@ const RomanticCalendar = () => {
               ))}
             </select>
           </label>
-          <fieldset
-            style={{
-              border: `1px dashed ${romanticPalette.secondary}`,
-              borderRadius: "16px",
-              padding: "16px",
-              background: "rgba(255, 179, 193, 0.15)",
-            }}
-          >
-            <legend style={{ padding: "0 12px", color: romanticPalette.primary, fontWeight: 600 }}>
-              Recordatorios amorosos 💡
-            </legend>
-            <label style={{ ...labelStyle, flexDirection: "row", alignItems: "center", gap: "12px" }}>
+          <fieldset className="calendar-form__reminder">
+            <legend>Recordatorios amorosos 💡</legend>
+            <label className="calendar-form__switch">
               <input
                 type="checkbox"
                 checked={formData.reminderEnabled}
@@ -384,8 +321,8 @@ const RomanticCalendar = () => {
               Activar recordatorio
             </label>
             {formData.reminderEnabled && (
-              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px" }}>
-                <label style={labelStyle}>
+              <div className="calendar-form__grid">
+                <label>
                   Anticipación (minutos)
                   <input
                     type="number"
@@ -398,17 +335,15 @@ const RomanticCalendar = () => {
                         reminderMinutesBefore: Number(event.target.value),
                       }))
                     }
-                    style={inputStyle}
                   />
                 </label>
-                <label style={labelStyle}>
+                <label>
                   Método
                   <select
                     value={formData.reminderMethod}
                     onChange={(event) =>
                       setFormData((current) => ({ ...current, reminderMethod: event.target.value as ReminderMethod }))
                     }
-                    style={inputStyle}
                   >
                     <option value="email">Correo romántico</option>
                     <option value="push">Notificación dulce</option>
@@ -417,104 +352,38 @@ const RomanticCalendar = () => {
               </div>
             )}
           </fieldset>
-          <div style={{ display: "flex", gap: "12px" }}>
+          <div className="calendar-form__actions">
             <button
+              className="romantic-button"
               type="submit"
-              style={{
-                ...actionButtonStyle,
-                background: romanticPalette.primary,
-                color: "white",
-              }}
               disabled={createEventMutation.isPending || updateEventMutation.isPending || isLoading}
             >
               {formData.id ? "Guardar cambios" : "Guardar recuerdo"}
             </button>
             {formData.id && (
               <button
+                className="calendar-form__secondary"
                 type="button"
                 onClick={handleDelete}
-                style={{
-                  ...actionButtonStyle,
-                  background: "white",
-                  color: romanticPalette.primary,
-                  border: `2px solid ${romanticPalette.primary}`,
-                }}
                 disabled={deleteEventMutation.isPending}
               >
                 Borrar recuerdo
               </button>
             )}
-            <button
-              type="button"
-              onClick={() => setFormData(defaultForm)}
-              style={{
-                ...actionButtonStyle,
-                background: "white",
-                color: romanticPalette.secondary,
-                border: `2px solid ${romanticPalette.secondary}`,
-              }}
-            >
+            <button className="calendar-form__secondary" type="button" onClick={() => setFormData(defaultForm)}>
               Limpiar
             </button>
           </div>
         </form>
         {(message || error) && (
-          <div
-            role="alert"
-            style={{
-              borderRadius: "16px",
-              padding: "12px 16px",
-              background: error ? "rgba(214, 51, 108, 0.2)" : "rgba(121, 217, 182, 0.25)",
-              color: error ? romanticPalette.primary : "#1a3d2f",
-              border: `1px solid ${error ? romanticPalette.primary : "#7dd3a7"}`,
-              display: "flex",
-              alignItems: "center",
-              gap: "12px",
-            }}
-          >
-            <span aria-hidden> {error ? "💔" : "💖"} </span>
+          <div className={`calendar-form__alert ${error ? "is-error" : "is-success"}`} role="alert">
+            <span aria-hidden>{error ? "💔" : "💖"}</span>
             <span>{error ?? message}</span>
           </div>
         )}
       </section>
     </div>
   );
-};
-
-const toolbarButtonStyle: CSSProperties = {
-  background: "white",
-  color: romanticPalette.primary,
-  border: `1px solid ${romanticPalette.primary}`,
-  borderRadius: "999px",
-  padding: "6px 12px",
-  cursor: "pointer",
-  fontWeight: 600,
-  boxShadow: "0 4px 8px rgba(214, 51, 108, 0.15)",
-};
-
-const labelStyle: CSSProperties = {
-  display: "flex",
-  flexDirection: "column",
-  gap: "8px",
-  fontWeight: 600,
-};
-
-const inputStyle: CSSProperties = {
-  padding: "10px 14px",
-  borderRadius: "12px",
-  border: "1px solid rgba(214, 51, 108, 0.3)",
-  background: "rgba(255, 255, 255, 0.9)",
-  boxShadow: "inset 0 2px 4px rgba(214, 51, 108, 0.08)",
-  color: romanticPalette.text,
-};
-
-const actionButtonStyle: CSSProperties = {
-  padding: "12px 18px",
-  borderRadius: "999px",
-  border: "none",
-  fontWeight: 700,
-  cursor: "pointer",
-  transition: "transform 0.2s ease",
 };
 
 const formatInputDate = (value: stringOrDate) =>
