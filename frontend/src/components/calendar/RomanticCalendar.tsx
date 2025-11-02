@@ -168,8 +168,8 @@ const RomanticCalendar = () => {
     setFormData({
       id: romantic.id,
       title: romantic.title,
-      start: romantic.start.slice(0, 16),
-      end: romantic.end.slice(0, 16),
+      start: formatInputDate(romantic.start),
+      end: formatInputDate(romantic.end),
       notes: romantic.notes,
       tag: romantic.tag,
       reminderEnabled: Boolean(romantic.reminder),
