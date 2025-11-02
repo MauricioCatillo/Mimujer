@@ -2,7 +2,6 @@ import { Router } from "express";
 import multer from "multer";
 import path from "path";
 import fs from "fs";
-import { authenticate } from "../middleware/authMiddleware.js";
 import { createPhoto, deletePhoto, listPhotos } from "../controllers/photoController.js";
 import { env } from "../config/env.js";
 
@@ -21,7 +20,6 @@ const storage = multer.diskStorage({
 const upload = multer({ storage });
 
 const router = Router();
-router.use(authenticate);
 
 router.get("/", listPhotos);
 router.post("/", upload.single("file"), createPhoto);
