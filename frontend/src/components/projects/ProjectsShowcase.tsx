@@ -21,10 +21,14 @@ const imagePlaceholder =
 const sanitizeUrl = (value: string) => {
   try {
     const url = new URL(value);
-    return url.toString();
+    if (url.protocol === 'http:' || url.protocol === 'https:') {
+      return url.toString();
+    }
   } catch {
-    return '';
+    // ignore parsing errors
   }
+
+  return '';
 };
 
 export default function ProjectsShowcase({ projects, loading, error, onDelete }: ProjectsShowcaseProps) {
