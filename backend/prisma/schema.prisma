@@ -1,0 +1,44 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+// Ajusta la URL de la base de datos en el archivo .env dentro de backend/
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Event {
+  id          Int      @id @default(autoincrement())
+  title       String
+  description String?
+  date        DateTime
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Reminder {
+  id          Int      @id @default(autoincrement())
+  title       String
+  description String?
+  remindAt    DateTime
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Photo {
+  id          Int      @id @default(autoincrement())
+  title       String
+  url         String
+  description String?
+  createdAt   DateTime @default(now())
+}
+
+model Project {
+  id          Int      @id @default(autoincrement())
+  name        String
+  summary     String?
+  status      String   @default("draft")
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
