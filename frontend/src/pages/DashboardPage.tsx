@@ -11,9 +11,9 @@ interface DashboardCounts {
 
 const fetchDashboard = async (): Promise<DashboardCounts> => {
   const [eventsRes, photosRes, projectsRes] = await Promise.all([
-    api.get("/events"),
-    api.get("/photos"),
-    api.get("/projects"),
+    api.get("events"),
+    api.get("photos"),
+    api.get("projects"),
   ]);
 
   const events = eventsRes.data as Array<{ title: string; start: string }>;

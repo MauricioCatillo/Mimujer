@@ -16,7 +16,7 @@ const usePhotos = () =>
   useQuery({
     queryKey: ["photos"],
     queryFn: async () => {
-      const { data } = await api.get<Photo[]>("/photos");
+      const { data } = await api.get<Photo[]>("photos");
       return data;
     },
   });
@@ -44,7 +44,7 @@ const PhotoAlbumPage = () => {
         formData.append("takenAt", takenAt);
       }
 
-      await api.post("/photos", formData, {
+      await api.post("photos", formData, {
         headers: { "Content-Type": "multipart/form-data" },
       });
     },
@@ -61,7 +61,7 @@ const PhotoAlbumPage = () => {
 
   const deleteMutation = useMutation({
     mutationFn: async (id: string) => {
-      await api.delete(`/photos/${id}`);
+      await api.delete(`photos/${id}`);
     },
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ["photos"] }),
   });

@@ -15,7 +15,7 @@ const RemindersPage = () => {
   const { data: reminders = [], isLoading } = useQuery({
     queryKey: ["reminders", "log"],
     queryFn: async () => {
-      const { data } = await api.get<ReminderLog[]>("/reminders/log");
+      const { data } = await api.get<ReminderLog[]>("reminders/log");
       return data;
     },
     refetchInterval: 60_000,
