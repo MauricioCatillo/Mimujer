@@ -1,6 +1,11 @@
-import { NavLink, Outlet } from "react-router-dom";
+import { ReactNode } from "react";
 import { useAuth } from "../../modules/auth/AuthProvider";
+import { NavLink } from "../../modules/router/SimpleRouter";
 import "./AppLayout.css";
+
+interface AppLayoutProps {
+  children: ReactNode;
+}
 
 const navItems = [
   { path: "/", label: "Inicio" },
@@ -10,7 +15,7 @@ const navItems = [
   { path: "/recordatorios", label: "Recordatorios" },
 ];
 
-const AppLayout = () => {
+const AppLayout = ({ children }: AppLayoutProps) => {
   const { email, logout } = useAuth();
 
   return (
@@ -45,7 +50,7 @@ const AppLayout = () => {
         </div>
       </aside>
       <main className="app-shell__content">
-        <Outlet />
+        {children}
       </main>
     </div>
   );
