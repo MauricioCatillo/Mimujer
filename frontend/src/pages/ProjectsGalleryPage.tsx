@@ -16,7 +16,7 @@ const ProjectsGalleryPage = () => {
   const { data: projects = [] } = useQuery({
     queryKey: ["projects"],
     queryFn: async () => {
-      const { data } = await api.get<Project[]>("/projects");
+      const { data } = await api.get<Project[]>("projects");
       return data;
     },
   });
@@ -24,16 +24,13 @@ const ProjectsGalleryPage = () => {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [url, setUrl] = useState("");
-  const [thumbnailUrl, setThumbnailUrl] = useState("");
-
   const createMutation = useMutation({
     mutationFn: async (event: FormEvent<HTMLFormElement>) => {
       event.preventDefault();
-      await api.post("/projects", {
+      await api.post("projects", {
         title,
         description,
         url,
-        thumbnailUrl: thumbnailUrl || undefined,
       });
     },
     onSuccess: () => {
@@ -41,13 +38,12 @@ const ProjectsGalleryPage = () => {
       setTitle("");
       setDescription("");
       setUrl("");
-      setThumbnailUrl("");
     },
   });
 
   const deleteMutation = useMutation({
     mutationFn: async (id: string) => {
-      await api.delete(`/projects/${id}`);
+      await api.delete(`projects/${id}`);
     },
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ["projects"] }),
   });
@@ -75,15 +71,6 @@ const ProjectsGalleryPage = () => {
               value={url}
               onChange={(event) => setUrl(event.target.value)}
               required
-              type="url"
-              placeholder="https://"
-            />
-          </label>
-          <label>
-            Miniatura (opcional)
-            <input
-              value={thumbnailUrl}
-              onChange={(event) => setThumbnailUrl(event.target.value)}
               type="url"
               placeholder="https://"
             />
