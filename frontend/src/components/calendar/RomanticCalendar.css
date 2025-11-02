@@ -1,0 +1,212 @@
+.calendar-screen {
+  display: grid;
+  grid-template-columns: minmax(0, 2fr) minmax(320px, 1fr);
+  gap: 24px;
+  min-height: calc(100vh - 4rem);
+  color: #5f021f;
+}
+
+.calendar-board {
+  background: rgba(255, 255, 255, 0.85);
+  border: 1px solid rgba(255, 179, 193, 0.6);
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.calendar-header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.calendar-header span {
+  font-size: 2rem;
+}
+
+.calendar-header h1 {
+  margin: 0;
+  font-family: "Playfair Display", serif;
+  font-size: 1.8rem;
+  color: #c2255c;
+}
+
+.calendar-header p {
+  margin: 0.25rem 0 0;
+  color: #7b2b57;
+}
+
+.calendar-widget {
+  min-height: 70vh;
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.9);
+  padding: 0.5rem;
+  box-shadow: inset 0 0 0 1px rgba(214, 51, 108, 0.08);
+}
+
+.calendar-event {
+  background: rgba(255, 179, 193, 0.9);
+  border: 2px solid #d6336c;
+  border-radius: 12px;
+  color: #5f021f;
+  padding: 4px 8px;
+  box-shadow: 0 4px 12px rgba(214, 51, 108, 0.25);
+}
+
+.calendar-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.75rem;
+  gap: 1rem;
+}
+
+.calendar-toolbar__label h2 {
+  margin: 0;
+  color: #a61e4d;
+}
+
+.calendar-toolbar__controls {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.calendar-toolbar__button {
+  background: #fff;
+  border: 1px solid #d6336c;
+  border-radius: 999px;
+  padding: 0.35rem 0.75rem;
+  cursor: pointer;
+  font-weight: 600;
+  color: #d6336c;
+  box-shadow: 0 4px 8px rgba(214, 51, 108, 0.15);
+}
+
+.calendar-toolbar__button:hover {
+  background: rgba(240, 101, 149, 0.12);
+}
+
+.calendar-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  border: 1px solid rgba(247, 131, 172, 0.4);
+  background: rgba(255, 255, 255, 0.92);
+}
+
+.calendar-form__title {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin: 0;
+  color: #c2255c;
+}
+
+.calendar-form__fields {
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+}
+
+.calendar-form__fields label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  font-weight: 600;
+  color: #7b2b57;
+}
+
+.calendar-form__fields input,
+.calendar-form__fields select,
+.calendar-form__fields textarea {
+  border-radius: 12px;
+  border: 1px solid rgba(214, 51, 108, 0.3);
+  padding: 0.75rem 1rem;
+  font-size: 1rem;
+  background: rgba(255, 255, 255, 0.95);
+  box-shadow: inset 0 2px 6px rgba(214, 51, 108, 0.08);
+  color: #5f021f;
+}
+
+.calendar-form__fields textarea {
+  min-height: 120px;
+  resize: vertical;
+}
+
+.calendar-form__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 0.75rem;
+}
+
+.calendar-form__reminder {
+  border-radius: 16px;
+  border: 1px dashed rgba(247, 131, 172, 0.7);
+  padding: 1rem;
+  background: rgba(255, 179, 193, 0.15);
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.calendar-form__reminder legend {
+  font-weight: 700;
+  color: #d6336c;
+  padding: 0 0.5rem;
+}
+
+.calendar-form__switch {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-weight: 600;
+  color: #7b2b57;
+}
+
+.calendar-form__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.calendar-form__secondary {
+  background: #fff;
+  border: 2px solid #f783ac;
+  border-radius: 999px;
+  padding: 0.75rem 1.5rem;
+  font-weight: 600;
+  color: #d6336c;
+  cursor: pointer;
+}
+
+.calendar-form__alert {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem 1rem;
+  border-radius: 16px;
+  font-weight: 600;
+}
+
+.calendar-form__alert.is-success {
+  background: rgba(121, 217, 182, 0.25);
+  border: 1px solid #7dd3a7;
+  color: #1a3d2f;
+}
+
+.calendar-form__alert.is-error {
+  background: rgba(214, 51, 108, 0.2);
+  border: 1px solid #d6336c;
+  color: #d6336c;
+}
+
+@media (max-width: 960px) {
+  .calendar-screen {
+    grid-template-columns: 1fr;
+  }
+
+  .calendar-widget {
+    min-height: 60vh;
+  }
+}
