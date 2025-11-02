@@ -2,10 +2,10 @@ import 'dotenv/config';
 import express, { NextFunction, Request, Response } from 'express';
 import cors from 'cors';
 
-import eventsRouter from './routes/events.js';
-import remindersRouter from './routes/reminders.js';
-import photosRouter from './routes/photos.js';
-import projectsRouter from './routes/projects.js';
+import eventsRouter from './routes/events';
+import remindersRouter from './routes/reminders';
+import photosRouter from './routes/photos';
+import projectsRouter from './routes/projects';
 
 const app = express();
 
