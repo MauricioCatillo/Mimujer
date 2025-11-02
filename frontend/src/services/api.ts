@@ -1,6 +1,10 @@
 import axios from "axios";
 
-const baseURL = import.meta.env.VITE_API_URL ?? "/api";
+const configuredBaseUrl = import.meta.env.VITE_API_URL
+  ? import.meta.env.VITE_API_URL.trim().replace(/\/+$/, "")
+  : undefined;
+
+const baseURL = configuredBaseUrl && configuredBaseUrl.length > 0 ? configuredBaseUrl : "/api";
 
 const assetBase = (() => {
   if (!baseURL.startsWith("http")) {
