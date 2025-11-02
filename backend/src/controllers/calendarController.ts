@@ -1,34 +1,89 @@
+import { randomUUID } from "crypto";
 import { Request, Response } from "express";
-import { nanoid } from "nanoid";
-import { z } from "zod";
 import { EventStore } from "../services/eventStore.js";
-import { CalendarEvent } from "../types.js";
+import { CalendarEvent, ReminderMethod } from "../types.js";
 
-const reminderSchema = z
-  .object({
-    method: z.enum(["email", "push"], {
-      required_error: "El método de recordatorio es obligatorio",
-    }),
-    minutesBefore: z
-      .number({
-        required_error: "Debes indicar cuántos minutos antes avisar",
-        invalid_type_error: "El recordatorio debe expresarse en minutos",
-      })
-      .int()
-      .min(5, "El recordatorio debe configurarse al menos 5 minutos antes"),
-  })
-  .optional();
+interface ReminderPayload {
+  method: ReminderMethod;
+  minutesBefore: number;
+}
 
-const baseEventSchema = z.object({
-  title: z.string({ required_error: "El título es obligatorio" }).min(1, "El título es obligatorio"),
-  start: z.string({ required_error: "La fecha de inicio es obligatoria" }),
-  end: z.string({ required_error: "La fecha de fin es obligatoria" }),
-  notes: z.string({ required_error: "Comparte algunas notas cariñosas" }).min(1),
-  tag: z.string({ required_error: "Selecciona una etiqueta" }).min(1),
-  reminder: reminderSchema,
-});
+interface EventPayload {
+  title: string;
+  start: string;
+  end: string;
+  notes: string;
+  tag: string;
+  reminder?: ReminderPayload;
+}
 
-const parseEventDates = (input: z.infer<typeof baseEventSchema>) => {
+const assertString = (value: unknown, message: string): string => {
+  if (typeof value !== "string") {
+    throw new Error(message);
+  }
+
+  const trimmed = value.trim();
+  if (!trimmed) {
+    throw new Error(message);
+  }
+
+  return trimmed;
+};
+
+const validateReminder = (value: unknown): ReminderPayload => {
+  if (value === undefined) {
+    throw new Error("El método de recordatorio es obligatorio");
+  }
+
+  if (value === null || typeof value !== "object") {
+    throw new Error("El recordatorio debe expresarse en minutos");
+  }
+
+  const record = value as Record<string, unknown>;
+
+  const method = record.method;
+  if (method === undefined || (method !== "email" && method !== "push")) {
+    throw new Error("El método de recordatorio es obligatorio");
+  }
+
+  if (!record.hasOwnProperty("minutesBefore")) {
+    throw new Error("Debes indicar cuántos minutos antes avisar");
+  }
+
+  const minutes = record.minutesBefore;
+  if (typeof minutes !== "number" || Number.isNaN(minutes) || !Number.isInteger(minutes)) {
+    throw new Error("El recordatorio debe expresarse en minutos");
+  }
+
+  if (minutes < 5) {
+    throw new Error("El recordatorio debe configurarse al menos 5 minutos antes");
+  }
+
+  return { method, minutesBefore: minutes };
+};
+
+const validateEventPayload = (body: unknown): EventPayload => {
+  if (body === null || typeof body !== "object") {
+    throw new Error("Los datos del evento son obligatorios");
+  }
+
+  const record = body as Record<string, unknown>;
+
+  const title = assertString(record.title, "El título es obligatorio");
+  const start = assertString(record.start, "La fecha de inicio es obligatoria");
+  const end = assertString(record.end, "La fecha de fin es obligatoria");
+  const notes = assertString(record.notes, "Comparte algunas notas cariñosas");
+  const tag = assertString(record.tag, "Selecciona una etiqueta");
+
+  let reminder: ReminderPayload | undefined;
+  if (record.reminder !== undefined) {
+    reminder = validateReminder(record.reminder);
+  }
+
+  return { title, start, end, notes, tag, reminder };
+};
+
+const parseEventDates = (input: EventPayload) => {
   const startDate = new Date(input.start);
   const endDate = new Date(input.end);
 
@@ -48,7 +103,7 @@ const parseEventDates = (input: z.infer<typeof baseEventSchema>) => {
   return { startDate, endDate };
 };
 
-const formatEvent = (input: z.infer<typeof baseEventSchema>, id: string): CalendarEvent => ({
+const formatEvent = (input: EventPayload, id: string): CalendarEvent => ({
   id,
   title: input.title.trim(),
   start: new Date(input.start).toISOString(),
@@ -65,11 +120,11 @@ export const listEvents = async (_req: Request, res: Response) => {
 
 export const createEvent = async (req: Request, res: Response) => {
   try {
-    const payload = baseEventSchema.parse(req.body);
+    const payload = validateEventPayload(req.body);
     parseEventDates(payload);
 
     const events = await EventStore.getAll();
-    const event = formatEvent(payload, nanoid());
+    const event = formatEvent(payload, randomUUID());
     events.push(event);
     await EventStore.saveAll(events);
 
@@ -81,7 +136,7 @@ export const createEvent = async (req: Request, res: Response) => {
 
 export const updateEvent = async (req: Request, res: Response) => {
   try {
-    const payload = baseEventSchema.parse(req.body);
+    const payload = validateEventPayload(req.body);
     parseEventDates(payload);
 
     const { id } = req.params;
@@ -116,10 +171,6 @@ export const deleteEvent = async (req: Request, res: Response) => {
 };
 
 const handleControllerError = (error: unknown, res: Response) => {
-  if (error instanceof z.ZodError) {
-    return res.status(400).json({ message: error.errors.map((err) => err.message).join(". ") });
-  }
-
   if (error instanceof Error) {
     return res.status(400).json({ message: error.message });
   }
