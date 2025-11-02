@@ -1,6 +1,45 @@
 import axios from "axios";
 
-const baseURL = import.meta.env.VITE_API_URL ?? "/api";
+const normalizeBaseUrl = (input: string | undefined | null) => {
+  if (!input) {
+    return undefined;
+  }
+
+  const trimmed = input.trim();
+  if (trimmed.length === 0) {
+    return undefined;
+  }
+
+  if (/^https?:/i.test(trimmed)) {
+    const url = new URL(trimmed);
+    const sanitizedPath = url.pathname.replace(/\/+$/, "");
+    if (!/\/api(\/$)?$/i.test(sanitizedPath)) {
+      url.pathname = `${sanitizedPath === "" ? "/" : sanitizedPath}/api`;
+    } else {
+      url.pathname = sanitizedPath;
+    }
+    return url.toString().replace(/\/+$/, "");
+  }
+
+  let relative = trimmed.replace(/\/+$/, "");
+  if (relative.length === 0) {
+    return "/api";
+  }
+
+  if (!relative.startsWith("/")) {
+    relative = `/${relative}`;
+  }
+
+  if (!/\/api(\/$)?$/i.test(relative)) {
+    relative = `${relative}/api`;
+  }
+
+  return relative.replace(/\/+$/, "");
+};
+
+const configuredBaseUrl = normalizeBaseUrl(import.meta.env.VITE_API_URL);
+
+const baseURL = configuredBaseUrl ?? "/api";
 
 const assetBase = (() => {
   if (!baseURL.startsWith("http")) {
